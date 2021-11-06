@@ -1,0 +1,10 @@
+matplotlib>=3.2
+numpy>=1.16
+pandas>=1.0
+scipy>=1.5.0
+ta
+mplfinance>0.11
+binance>1.0.12
+krakenx>2.0
+pykrakenapi>0.2.1
+statsmodels>=0.12.0

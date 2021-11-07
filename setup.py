@@ -16,8 +16,7 @@ setup(
         author="dokato",
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
-        packages=find_packages(include=['crypto_ta']),
-        install_requires=[], # add any additional packages that 
+        packages=find_packages(include=['crypto_ta', 'crypto_ta.*']),
         url='https://github.com/dokato',
         keywords=['python', 'cryptocurrencies', 'technical analysis'],
         classifiers= [

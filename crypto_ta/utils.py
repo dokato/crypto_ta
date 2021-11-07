@@ -4,7 +4,7 @@
 import pandas as pd
 import numpy as np
 
-def binance_raw_to_ohlcv(raw, silent = False):
+def binance_raw_to_ohlcv(raw: list, silent : bool = False) -> pd.DataFrame:
     for line in raw:
         del line[6:] # don't need this now
     df_ = pd.DataFrame(raw, columns=['date', 'open', 'high', 'low', 'close', 'volume'])
@@ -15,7 +15,8 @@ def binance_raw_to_ohlcv(raw, silent = False):
     if not silent: print(df_.head())
     return df_
 
-def col_to_vector(df_, col = 'close'):
+def col_to_vector(df_ : pd.DataFrame, col : str = 'close') -> np.array:
+    '''Extract column from a pandas dataframe and return a numpy vector'''
     val = df_[col].to_numpy()
     val = val.astype(np.float)
     return val

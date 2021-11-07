@@ -4,11 +4,20 @@
 import mplfinance as mpf
 import matplotlib.pyplot as plt
 
-def mfp_plot(df, moving_averages = (3,6,9),
-                volume = True, lastn = None, type='candle'):
+__all__ = ["mfp_plot", "plot_candle", "plot_renko", "plot_basic",
+           "plot_ta_feature"]
+
+def mfp_plot(df, moving_averages = (3,6,9), volume = True, lastn = None,
+             type='candle', title=None):
     if not lastn is None:
         df = df[-lastn:]
-    mpf.plot(df, type=type, mav=moving_averages, volume=volume)
+    fig, axes = mpf.plot(df, type=type, mav=moving_averages, volume=volume,
+                         returnfig=True)
+    # Configure chart legend and title
+    axes[0].legend([f"MA {i}" for i in moving_averages])
+    if title:
+        axes[0].set_title(title)
+    fig.show()
 
 def plot_candle(df, moving_averages = (3,6,9),
                 volume = True, lastn = None):

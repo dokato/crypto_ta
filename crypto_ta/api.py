@@ -6,16 +6,8 @@ from abc import ABC, abstractmethod
 from typing import Union, Optional, Sequence, List, Dict, overload
 from datetime import datetime
 
-from scipy.stats import linregress
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.graphics.tsaplots import plot_predict 
-from ta import add_all_ta_features
-from ta.utils import dropna
-
 from binance.client import Client
 
-from utils import *
-from plots import *
 
 class NotYetCalculated(Exception):
     pass
@@ -128,7 +120,23 @@ class API(ABC):
         Forest to *n* periods.
         """
         self.assert_arima_exists()
-        return self.arima.rr.forecast(20)
+        return self.arima.forecast(n)
+
+    def plot_forecasts(self, date_to, date_from=None, prop='close', start_pred = 5):
+        """
+        Plot ARIMA forecasts.
+        """
+        self.assert_arima_exists()
+        fig, ax = plt.subplots()
+        # TODO check if correct date (i.e. in index)
+        if date_from is None:
+            subsdf = self.ohlcv[prop]
+        else:
+            subsdf = self.ohlcv[date_from:][prop]
+        subsdf.plot(ax=ax, color='k')
+        assert start_pred > 0, "*start_pred* must be > 0"
+        last_k_dt = self.ohlcv.tail(start_pred).index[0]
+        plot_predict(self.arima, last_k_dt, date_to, ax=ax)
 
     def plot_ta(self, feature_name = None, style='r-'):
         if feature_name:
@@ -136,7 +144,10 @@ class API(ABC):
         self.assert_ta_exists()
         plot_ta_feature(self.features, feature_name, style=style)
 
-    def get_trend_lines(self, prop='close', style='k-'):
+    def get_trend_lines(self, date_from=None, date_to=None, prop='close', style='k-'):
+        """
+        TODO date_from date_to
+        """
         xrange = np.arange(self.ohlcv.shape[0]) + 1
         slope, intercept, r_value, p_value, std_err = linregress(x=xrange, y=self.ohlcv['close'])
         line_trend = slope * xrange + intercept

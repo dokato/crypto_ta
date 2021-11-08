@@ -18,7 +18,7 @@ pip install git+https://github.com/dokato/crypto_ta.git
 
 # How to use it?
 
-Visit `tutorial/` folder.
+Visit `tutorials/` folder.
 
 # Dependencies
 

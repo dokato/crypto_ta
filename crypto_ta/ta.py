@@ -1,3 +1,5 @@
+import warnings
+
 from scipy.stats import linregress
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.graphics.tsaplots import plot_predict 
@@ -32,6 +34,11 @@ class CryptoTA(object):
         ohlcv = self.api.get_ohlcv(cpair, interval = interval,
                            from_date=from_date, to_date=to_date)
         self.ohlcv = ohlcv
+        if self.ohlcv.shape[0] < 30:
+            warnings.warn('''
+            CryptoTA warning: your OHLCV selection has less than 30 samples.
+            It can be too short for some TA features.
+            ''')
 
     def get_ta_features(self) -> list:
         '''
@@ -136,18 +143,28 @@ class CryptoTA(object):
         plot_predict(self.arima, last_k_dt, date_to, ax=ax)
 
     def plot_ta(self, feature_name = None, style='r-'):
+        '''
+        Plots Technical Analysis features.
+        '''
         if not feature_name:
             raise ValueError("You need to specify a feature name. Check `get_ta_features()`")
         self._assert_ta_exists()
         plot_ta_feature(self.features, feature_name, style=style)
 
-    def plot_trend_lines(self, date_from=None, date_to=None, prop='close', style='k-'):
+    def plot_trend_line(self, date_from=None, date_to=None,
+                        prop='close', style='k-', show_diag=False, output=False):
         """
-        TODO date_from date_to
+        Fits and plots a trend line in current range.
         """
-        xrange = np.arange(self.ohlcv.shape[0]) + 1
-        slope, intercept, r_value, p_value, std_err = linregress(x=xrange, y=self.ohlcv['close'])
+        sub_ohlcv = self.ohlcv[date_from:date_to]
+        xrange = np.arange(sub_ohlcv.shape[0]) + 1
+        slope, intercept, r_value, _, std_err = linregress(x=xrange, y=sub_ohlcv['close'])
+        if show_diag:
+            print(f'R: {r_value}; std {std_err}')
         line_trend = slope * xrange + intercept
-        plot_ta_feature(self.ohlcv, prop, style=style, label=prop)
-        plt.plot(self.ohlcv.index, line_trend, 'r--', label="linear trend")
-        plt.legend()
+        if output:
+            return (slope, intercept)
+        else:
+            plot_ta_feature(sub_ohlcv, prop, style=style, label=prop)
+            plt.plot(sub_ohlcv.index, line_trend, 'r--', label="linear trend")
+            plt.legend()

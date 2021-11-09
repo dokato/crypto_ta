@@ -26,7 +26,7 @@ class CryptoTA(object):
         self.ohlcv = None
         self.api = api
     
-    def get_ohlcv(self, cpair, interval = '1w', from_date=None, to_date=None, **kwargs):
+    def get_ohlcv(self, cpair : str, interval :str = '1w', from_date=None, to_date=None, **kwargs):
         '''
         This is a wrapper for API specific `get_ohlcv` method. To learn more
         check `BinanceAPI`, or `KrakenAPI`
@@ -50,21 +50,21 @@ class CryptoTA(object):
             return list(self.features.columns[5:])
 
 
-    def _assert_ohlcv_exists(self):
+    def _assert_ohlcv_exists(self) -> None:
         '''
         Checks if "ohlcv" property exists.
         '''
         if self.ohlcv is None:
             raise NotYetCalculated("You need to calculate OHLCV values first! Use `get_ohlcv()` method.")
 
-    def _assert_ta_exists(self):
+    def _assert_ta_exists(self) -> None:
         '''
         Checks if "features" (TA) property exists.
         '''
         if self.ohlcv is None:
             raise NotYetCalculated("You need to calculate TA features first! Use `calculate_ta()` method.")
 
-    def _assert_arima_exists(self):
+    def _assert_arima_exists(self) -> None:
         '''
         Checks if "arima" property exists.
         '''
@@ -97,7 +97,7 @@ class CryptoTA(object):
         plot_basic(self.ohlcv, moving_averages = moving_averages,
                     volume = volume, lastn = lastn)
     
-    def calculate_ta(self):
+    def calculate_ta(self) -> None:
         """
         Results of this method is stored in the property `features`.
         """
@@ -107,7 +107,7 @@ class CryptoTA(object):
                        high="high", low="low", close="close",
                        volume="volume", fillna=True)
 
-    def calculate_arima(self, order = (2,1,2), show_diag=False):
+    def calculate_arima(self, order = (2,1,2), show_diag=False) -> None:
         """
         Results of this method is stored in the property `arima`.
         """
@@ -119,7 +119,7 @@ class CryptoTA(object):
             plt.show()
             print("AIC", self.arima.aic, "BIC", self.arima.bic)
     
-    def forecast(self, n):
+    def forecast(self, n : int) -> pd.DataFrame:
         """
         Forest to *n* periods.
         """
@@ -152,7 +152,8 @@ class CryptoTA(object):
         plot_ta_feature(self.features, feature_name, style=style)
 
     def plot_trend_line(self, date_from=None, date_to=None,
-                        prop='close', style='k-', show_diag=False, output=False):
+                        prop : str ='close', style : str ='k-', show_diag : bool = False,
+                        output : bool = False):
         """
         Fits and plots a trend line in current range.
         """

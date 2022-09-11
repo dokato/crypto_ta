@@ -39,3 +39,8 @@ and some API python wrappers:
 This package is still in its infancy and the api can change any time.
 
 Contributions are welcome. Please raise the issue first before you make a PR and please test your code.
+
+## TODO
+
+- add ccxt support
+- cloud plots

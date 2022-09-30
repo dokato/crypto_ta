@@ -16,6 +16,12 @@ The easiest way to install is to use pip.
 pip install git+https://github.com/dokato/crypto_ta.git
 ```
 
+Or download the package from https://github.com/dokato/crypto_ta.git and install with:
+
+```
+python setup.py install
+```
+
 # How to use it?
 
 Visit `tutorials/` folder.
